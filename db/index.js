@@ -274,8 +274,8 @@ async function getPostById(postId) {
 }
 
 async function getPostsByTagName(tagName) {
-    try {
-        const { rows: postIds } = await client.query(`
+  try {
+    const { rows: postIds } = await client.query(`
         SELECT posts.id
         FROM posts
         JOIN post_tags ON posts.id=post_tags."postId"
@@ -283,22 +283,40 @@ async function getPostsByTagName(tagName) {
         WHERE tags.name=$1;
       `, [tagName]);
 
-        return await Promise.all(postIds.map(
-            post => getPostById(post.id)
-        ));
-    } catch (error) {
-        throw error;
-    }
+    return await Promise.all(postIds.map(
+      post => getPostById(post.id)
+    ));
+  } catch (error) {
+    throw error;
+  }
 } 
 
 async function getAllTags(){
+  try {
     const { rows } = await client.query(`
         SELECT name
         FROM tags;
     `)
     return rows
-}
+  } catch (error) {
+    throw error;
+  }
+} 
 
+
+async function getUserByUsername(username) {
+  try {
+    const { rows: [ user ] } = await client.query(`
+      SELECT *
+      FROM users
+      WHERE username=$1;
+    `, [username]);
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
 
 module.exports = {  
   client,
@@ -315,5 +333,6 @@ module.exports = {
   addTagsToPost,
   getPostById,
   getPostsByTagName,
-  getAllTags
+  getAllTags,
+  getUserByUsername
 }

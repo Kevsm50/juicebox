@@ -4,10 +4,13 @@ const morgan = require('morgan');
 const apiRouter = require('./api');
 const { client } = require('./db');
 const server = express();
+require('dotenv').config();
+
 
 client.connect();
-server.use(morgan('dev'));
+server.use(express.urlencoded({extended: false}));
 server.use(express.json());
+server.use(morgan('dev'));
 server.use('/api', apiRouter);
 
 server.use((req, res, next) => {
